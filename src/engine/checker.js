@@ -538,6 +538,10 @@ RULES.push((s, opts) => {
     if (!w || w[0] !== w[0].toLowerCase()) continue
     const entry = lex.get(capitalise(w))
     if (!entry || entry.pos !== 'noun') continue
+    // Many nouns share a spelling with a verb form — die Stelle / ich stelle,
+    // die Frage / ich frage. Next to a subject pronoun the word is the verb.
+    const pron = (t) => ['ich', 'du', 'er', 'sie', 'es', 'wir', 'ihr', 'man'].includes(fold(strip(t || '')))
+    if (pron(toks[i - 1]) || pron(toks[i + 1]) || FINITE.has(fold(w))) continue
     out.push(
       issue(
         'grossschreibung',
