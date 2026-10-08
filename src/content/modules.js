@@ -88,7 +88,7 @@ export const modules = [
     title: 'Opinions and ideas',
     icon: '💬',
     summary: 'Argue a point, discuss technology, media, the environment and society.',
-    lessonIds: ['b1.l21'],
+    lessonIds: ['b1.l21', 'b1.l22'],
   },
   {
     id: 'b1.life',
