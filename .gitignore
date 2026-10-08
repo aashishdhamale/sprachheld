@@ -1,0 +1,16 @@
+# Dependencies and build output
+node_modules/
+dist/
+dist-artifact/
+
+# Third-party course material — copyrighted, kept local only
+Kursbuch/
+*.pdf
+
+# Local editor / tool state
+.claude/settings.local.json
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

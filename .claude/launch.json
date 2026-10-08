@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sprachheld",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    },
+    {
+      "name": "sprachheld-pages-check",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["vite", "preview", "--base", "/sprachheld/", "--port", "4173", "--strictPort"],
+      "port": 4173
+    },
+    {
+      "name": "sprachheld-artifact-check",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "dist-artifact", "-l", "4174"],
+      "port": 4174
+    }
+  ]
+}

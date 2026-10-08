@@ -1,0 +1,1377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Artikeltrainer</title>
+<style>
+/* ── Tokens: light on bare :root, dark via media + explicit stamp ───────── */
+:root {
+  color-scheme: light;
+  --bg: #f3f4f7;
+  --surface: #ffffff;
+  --surface-2: #f6f7f9;
+  --line: #e1e4ea;
+  --ink: #161a20;
+  --muted: #5b6471;
+  --dim: #8a929e;
+
+  --der: #2460c8;
+  --der-soft: #e7eefc;
+  --die: #c0386c;
+  --die-soft: #fbe8f0;
+  --das: #17845e;
+  --das-soft: #e2f4ec;
+
+  --ok: #16875a;
+  --ok-soft: #e3f5ec;
+  --bad: #cf3a3d;
+  --bad-soft: #fdeaea;
+
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(20, 26, 36, 0.05), 0 6px 20px rgba(20, 26, 36, 0.06);
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #101318;
+    --surface: #181c23;
+    --surface-2: #1e232c;
+    --line: #2b313c;
+    --ink: #eef1f5;
+    --muted: #a6afbc;
+    --dim: #7a8391;
+    --der: #7ea9ff;
+    --der-soft: #1a2439;
+    --die: #f283b1;
+    --die-soft: #331b27;
+    --das: #5ed2a6;
+    --das-soft: #12291f;
+    --ok: #52c795;
+    --ok-soft: #12281e;
+    --bad: #ff7b7d;
+    --bad-soft: #2d1719;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #101318;
+  --surface: #181c23;
+  --surface-2: #1e232c;
+  --line: #2b313c;
+  --ink: #eef1f5;
+  --muted: #a6afbc;
+  --dim: #7a8391;
+  --der: #7ea9ff;
+  --der-soft: #1a2439;
+  --die: #f283b1;
+  --die-soft: #331b27;
+  --das: #5ed2a6;
+  --das-soft: #12291f;
+  --ok: #52c795;
+  --ok-soft: #12281e;
+  --bad: #ff7b7d;
+  --bad-soft: #2d1719;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--der); outline-offset: 2px; border-radius: 6px; }
+
+.wrap {
+  max-width: 580px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.eyebrow {
+  display: flex;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.eyebrow span:nth-child(1) { color: var(--der); }
+.eyebrow span:nth-child(2) { color: var(--die); }
+.eyebrow span:nth-child(3) { color: var(--das); }
+h1 {
+  margin: 4px 0 2px;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-weight: 800;
+  text-wrap: balance;
+}
+.sub { margin: 0; color: var(--muted); }
+
+/* ── Mastery panel ──────────────────────────────────────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: grid;
+  gap: 10px;
+}
+.mastery-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.mastery-top strong { font-size: 15px; }
+.mastery-top span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--line); }
+.bar > i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width 300ms ease; }
+.genders { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.g { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.g b { font-size: 13px; }
+.g.der b { color: var(--der); }
+.g.die b { color: var(--die); }
+.g.das b { color: var(--das); }
+.g .bar { height: 6px; }
+.g.der .bar > i { background: var(--der); }
+.g.die .bar > i { background: var(--die); }
+.g.das .bar > i { background: var(--das); }
+.g small { font-variant-numeric: tabular-nums; }
+
+/* ── Controls ───────────────────────────────────────────────────────────── */
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 99px;
+  padding: 6px 13px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.chip[aria-pressed="true"] { border-color: var(--ink); color: var(--ink); background: var(--surface-2); }
+.chip:hover { color: var(--ink); }
+select {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  max-width: 100%;
+}
+.toggle { margin-left: auto; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
+
+/* ── Card ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 22px 18px 20px;
+  display: grid;
+  gap: 18px;
+}
+.card-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.topic { font-weight: 600; }
+.progress { height: 4px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.progress > i { display: block; height: 100%; background: var(--ink); opacity: 0.55; transition: width 250ms ease; }
+
+.word-zone { text-align: center; display: grid; gap: 6px; padding-block: 18px 6px; }
+.word-line {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.28em;
+  font-size: clamp(34px, 9vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.slot {
+  display: inline-block;
+  min-width: 2.3em;
+  border-bottom: 3px dashed var(--line);
+  color: transparent;
+  text-align: center;
+  transition: color 150ms;
+}
+.slot.der { color: var(--der); border-bottom-color: transparent; }
+.slot.die { color: var(--die); border-bottom-color: transparent; }
+.slot.das { color: var(--das); border-bottom-color: transparent; }
+.meaning { color: var(--muted); font-size: 20px; font-weight: 500; }
+.meaning[hidden] { display: none; }
+
+.speak {
+  justify-self: center;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.speak:hover { color: var(--ink); }
+
+.answers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.art {
+  border: 2px solid transparent;
+  border-radius: 14px;
+  padding: 16px 6px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  display: grid;
+  gap: 2px;
+  justify-items: center;
+  transition: transform 100ms ease, opacity 150ms, background 150ms, border-color 150ms;
+}
+.art small { font-size: 11px; font-weight: 600; opacity: 0.7; letter-spacing: 0.02em; }
+.art.der { color: var(--der); background: var(--der-soft); border-color: color-mix(in srgb, var(--der) 35%, transparent); }
+.art.die { color: var(--die); background: var(--die-soft); border-color: color-mix(in srgb, var(--die) 35%, transparent); }
+.art.das { color: var(--das); background: var(--das-soft); border-color: color-mix(in srgb, var(--das) 35%, transparent); }
+.art:hover:not(:disabled) { transform: translateY(-2px); }
+.art:active:not(:disabled) { transform: translateY(0); }
+.art:disabled { cursor: default; }
+.art.faded { opacity: 0.35; }
+.art.correct { color: #fff; }
+.art.der.correct { background: var(--der); border-color: var(--der); }
+.art.die.correct { background: var(--die); border-color: var(--die); }
+.art.das.correct { background: var(--das); border-color: var(--das); }
+:root[data-theme="dark"] .art.correct { color: #0f1216; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .art.correct { color: #0f1216; } }
+.art.wrong { border-color: var(--bad); background: var(--bad-soft); color: var(--bad); animation: shake 320ms ease; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+}
+
+.feedback {
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+}
+.feedback[hidden] { display: none; }
+.feedback.ok { background: var(--ok-soft); }
+.feedback.bad { background: var(--bad-soft); }
+.feedback .verdict { font-weight: 800; font-size: 15px; }
+.feedback.ok .verdict { color: var(--ok); }
+.feedback.bad .verdict { color: var(--bad); }
+.feedback .detail { color: var(--muted); }
+.feedback .detail b { color: var(--ink); }
+.feedback .tip { color: var(--muted); font-size: 13px; }
+
+.next {
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  background: var(--ink);
+  color: var(--bg);
+}
+.next[hidden] { display: none; }
+
+.session { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+.session b { color: var(--ink); }
+.keys { font-size: 12px; color: var(--dim); text-align: center; }
+kbd {
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 0 5px;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+/* ── End of round ───────────────────────────────────────────────────────── */
+.done { text-align: center; display: grid; gap: 14px; padding-block: 8px; }
+.done h2 { margin: 0; font-size: 24px; letter-spacing: -0.02em; }
+.done p { margin: 0; color: var(--muted); }
+.big-score { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.missed { text-align: left; display: grid; gap: 6px; max-height: 260px; overflow-y: auto; padding: 4px; }
+.missed div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 10px; border-radius: 10px; background: var(--surface-2); font-size: 14px; }
+.missed span:last-child { color: var(--muted); text-align: right; }
+.a-der { color: var(--der); font-weight: 800; }
+.a-die { color: var(--die); font-weight: 800; }
+.a-das { color: var(--das); font-weight: 800; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 11px 16px;
+  font-weight: 700;
+}
+.btn.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+.footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 12px; color: var(--dim); flex-wrap: wrap; }
+.link-btn { border: none; background: none; color: var(--dim); font-size: 12px; text-decoration: underline; padding: 0; }
+.link-btn.armed { color: var(--bad); font-weight: 700; }
+
+.empty { text-align: center; color: var(--muted); padding-block: 24px; display: grid; gap: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 420px) {
+  h1 { font-size: 26px; }
+  .art { font-size: 20px; padding: 14px 4px; }
+  .toggle { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow"><span>der</span><span>die</span><span>das</span></div>
+    <h1>Artikeltrainer</h1>
+    <p class="sub">600 everyday German nouns. Pick the article — words you miss come back until you get them.</p>
+  </header>
+
+  <section class="panel" aria-label="Your progress">
+    <div class="mastery-top">
+      <strong>Mastered</strong>
+      <span id="masteryText">0 / 600</span>
+    </div>
+    <div class="bar"><i id="masteryBar" style="width:0%"></i></div>
+    <div class="genders" id="genders"></div>
+  </section>
+
+  <div class="controls">
+    <button class="chip" data-mode="all" aria-pressed="true">All words</button>
+    <button class="chip" data-mode="new" aria-pressed="false">New</button>
+    <button class="chip" data-mode="hard" aria-pressed="false">Difficult</button>
+    <label for="topic" class="sr-only" style="position:absolute;left:-9999px">Topic</label>
+    <select id="topic" aria-label="Topic"></select>
+    <label class="toggle"><input type="checkbox" id="showMeaning" checked> Meaning</label>
+  </div>
+
+  <section class="card" id="card" aria-live="polite"></section>
+
+  <div class="session" id="session"></div>
+  <p class="keys"><kbd>1</kbd> der · <kbd>2</kbd> die · <kbd>3</kbd> das · <kbd>Enter</kbd> next</p>
+
+  <footer class="footer">
+    <span>Progress is saved in this browser.</span>
+    <button class="link-btn" id="reset">Reset progress</button>
+  </footer>
+</main>
+
+<script>
+/* ── The 600 words: article|word|english|plural  (empty plural = no plural
+      in everyday use). Lines starting with # open a topic. ─────────────── */
+const RAW = `
+# Home
+der|Tisch|table|Tische
+der|Stuhl|chair|Stühle
+das|Bett|bed|Betten
+der|Schrank|cupboard, wardrobe|Schränke
+das|Sofa|sofa|Sofas
+die|Lampe|lamp|Lampen
+der|Teppich|carpet, rug|Teppiche
+das|Regal|shelf|Regale
+die|Tür|door|Türen
+das|Fenster|window|Fenster
+die|Wand|wall|Wände
+der|Boden|floor|Böden
+die|Decke|ceiling; blanket|Decken
+das|Kissen|cushion, pillow|Kissen
+die|Küche|kitchen|Küchen
+das|Bad|bathroom|Bäder
+das|Zimmer|room|Zimmer
+das|Wohnzimmer|living room|Wohnzimmer
+das|Schlafzimmer|bedroom|Schlafzimmer
+der|Flur|hallway|Flure
+der|Balkon|balcony|Balkone
+der|Garten|garden|Gärten
+die|Treppe|stairs|Treppen
+der|Keller|cellar, basement|Keller
+das|Dach|roof|Dächer
+die|Wohnung|flat, apartment|Wohnungen
+das|Haus|house|Häuser
+der|Schlüssel|key|Schlüssel
+das|Schloss|lock; castle|Schlösser
+der|Spiegel|mirror|Spiegel
+die|Uhr|clock, watch|Uhren
+der|Herd|stove, cooker|Herde
+der|Ofen|oven|Öfen
+der|Kühlschrank|fridge|Kühlschränke
+die|Waschmaschine|washing machine|Waschmaschinen
+die|Heizung|heating, radiator|Heizungen
+die|Dusche|shower|Duschen
+die|Badewanne|bathtub|Badewannen
+das|Waschbecken|washbasin|Waschbecken
+die|Toilette|toilet|Toiletten
+das|Handtuch|towel|Handtücher
+die|Seife|soap|Seifen
+die|Zahnbürste|toothbrush|Zahnbürsten
+der|Vorhang|curtain|Vorhänge
+die|Miete|rent|Mieten
+der|Schreibtisch|desk|Schreibtische
+der|Sessel|armchair|Sessel
+# Kitchen
+der|Teller|plate|Teller
+die|Tasse|cup|Tassen
+das|Glas|glass|Gläser
+die|Gabel|fork|Gabeln
+das|Messer|knife|Messer
+der|Löffel|spoon|Löffel
+die|Schüssel|bowl|Schüsseln
+der|Topf|pot, saucepan|Töpfe
+die|Pfanne|frying pan|Pfannen
+die|Flasche|bottle|Flaschen
+die|Dose|tin, can|Dosen
+die|Kaffeemaschine|coffee machine|Kaffeemaschinen
+die|Mikrowelle|microwave|Mikrowellen
+das|Rezept|recipe; prescription|Rezepte
+# Food & drink
+das|Brot|bread|Brote
+das|Brötchen|bread roll|Brötchen
+der|Käse|cheese|
+die|Butter|butter|
+die|Milch|milk|
+der|Zucker|sugar|
+das|Salz|salt|
+der|Pfeffer|pepper|
+der|Honig|honey|
+der|Reis|rice|
+das|Mehl|flour|
+das|Öl|oil|Öle
+der|Apfel|apple|Äpfel
+die|Birne|pear|Birnen
+die|Banane|banana|Bananen
+die|Orange|orange|Orangen
+die|Zitrone|lemon|Zitronen
+die|Traube|grape|Trauben
+die|Erdbeere|strawberry|Erdbeeren
+die|Kirsche|cherry|Kirschen
+die|Kartoffel|potato|Kartoffeln
+die|Tomate|tomato|Tomaten
+die|Gurke|cucumber|Gurken
+die|Zwiebel|onion|Zwiebeln
+die|Karotte|carrot|Karotten
+der|Knoblauch|garlic|
+der|Pilz|mushroom|Pilze
+die|Paprika|pepper (vegetable)|Paprikas
+der|Salat|salad; lettuce|Salate
+das|Gemüse|vegetables|
+das|Obst|fruit|
+das|Fleisch|meat|
+das|Hähnchen|chicken (meat)|Hähnchen
+der|Fisch|fish|Fische
+die|Wurst|sausage|Würste
+der|Schinken|ham|Schinken
+das|Ei|egg|Eier
+der|Joghurt|yoghurt|Joghurts
+die|Sahne|cream|
+das|Eis|ice; ice cream|
+die|Schokolade|chocolate|Schokoladen
+der|Kuchen|cake|Kuchen
+der|Keks|biscuit|Kekse
+die|Suppe|soup|Suppen
+die|Pizza|pizza|Pizzen
+die|Nudel|noodle|Nudeln
+die|Marmelade|jam|Marmeladen
+der|Kaffee|coffee|
+der|Tee|tea|Tees
+das|Wasser|water|
+der|Saft|juice|Säfte
+das|Bier|beer|Biere
+der|Wein|wine|Weine
+das|Frühstück|breakfast|Frühstücke
+das|Mittagessen|lunch|Mittagessen
+das|Abendessen|dinner|Abendessen
+die|Mahlzeit|meal|Mahlzeiten
+die|Süßigkeit|sweet, candy|Süßigkeiten
+der|Hunger|hunger|
+der|Durst|thirst|
+die|Speisekarte|menu|Speisekarten
+die|Rechnung|bill, invoice|Rechnungen
+das|Trinkgeld|tip|Trinkgelder
+der|Kellner|waiter|Kellner
+# Family & people
+die|Familie|family|Familien
+die|Mutter|mother|Mütter
+der|Vater|father|Väter
+das|Kind|child|Kinder
+der|Sohn|son|Söhne
+die|Tochter|daughter|Töchter
+der|Bruder|brother|Brüder
+die|Schwester|sister|Schwestern
+die|Oma|grandma|Omas
+der|Opa|grandpa|Opas
+die|Großmutter|grandmother|Großmütter
+der|Großvater|grandfather|Großväter
+der|Onkel|uncle|Onkel
+die|Tante|aunt|Tanten
+der|Mann|man; husband|Männer
+die|Frau|woman; wife|Frauen
+der|Freund|friend; boyfriend|Freunde
+die|Freundin|friend; girlfriend|Freundinnen
+der|Nachbar|neighbour|Nachbarn
+die|Person|person|Personen
+der|Mensch|human being|Menschen
+das|Baby|baby|Babys
+der|Junge|boy|Jungen
+das|Mädchen|girl|Mädchen
+der|Gast|guest|Gäste
+der|Partner|partner|Partner
+die|Hochzeit|wedding|Hochzeiten
+der|Name|name|Namen
+das|Alter|age|
+# Body
+der|Kopf|head|Köpfe
+das|Haar|hair|Haare
+das|Auge|eye|Augen
+die|Nase|nose|Nasen
+der|Mund|mouth|Münder
+das|Ohr|ear|Ohren
+der|Hals|neck; throat|Hälse
+die|Schulter|shoulder|Schultern
+der|Arm|arm|Arme
+die|Hand|hand|Hände
+der|Finger|finger|Finger
+das|Bein|leg|Beine
+der|Fuß|foot|Füße
+das|Knie|knee|Knie
+der|Bauch|belly|Bäuche
+der|Rücken|back|Rücken
+das|Herz|heart|Herzen
+der|Zahn|tooth|Zähne
+die|Zunge|tongue|Zungen
+die|Lippe|lip|Lippen
+die|Haut|skin|Häute
+das|Gesicht|face|Gesichter
+der|Körper|body|Körper
+das|Blut|blood|
+# Clothes
+die|Kleidung|clothing|
+das|Hemd|shirt|Hemden
+die|Hose|trousers|Hosen
+der|Rock|skirt|Röcke
+das|Kleid|dress|Kleider
+die|Jacke|jacket|Jacken
+der|Mantel|coat|Mäntel
+der|Pullover|jumper, sweater|Pullover
+die|Bluse|blouse|Blusen
+das|T-Shirt|T-shirt|T-Shirts
+die|Socke|sock|Socken
+der|Schuh|shoe|Schuhe
+der|Stiefel|boot|Stiefel
+die|Mütze|woolly hat, cap|Mützen
+der|Hut|hat|Hüte
+der|Schal|scarf|Schals
+der|Handschuh|glove|Handschuhe
+der|Gürtel|belt|Gürtel
+die|Krawatte|tie|Krawatten
+die|Tasche|bag; pocket|Taschen
+der|Anzug|suit|Anzüge
+die|Brille|glasses|Brillen
+die|Sonnenbrille|sunglasses|Sonnenbrillen
+der|Regenschirm|umbrella|Regenschirme
+die|Jeans|jeans|Jeans
+der|Ring|ring|Ringe
+der|Rucksack|backpack|Rucksäcke
+# Nature & weather
+die|Natur|nature|
+der|Baum|tree|Bäume
+die|Blume|flower|Blumen
+das|Gras|grass|Gräser
+der|Wald|forest|Wälder
+der|Berg|mountain|Berge
+der|Fluss|river|Flüsse
+der|See|lake|Seen
+das|Meer|sea|Meere
+der|Strand|beach|Strände
+die|Insel|island|Inseln
+der|Himmel|sky|
+die|Sonne|sun|
+der|Mond|moon|Monde
+der|Stern|star|Sterne
+die|Wolke|cloud|Wolken
+der|Regen|rain|
+der|Schnee|snow|
+der|Wind|wind|Winde
+der|Sturm|storm|Stürme
+das|Gewitter|thunderstorm|Gewitter
+das|Wetter|weather|
+die|Hitze|heat|
+die|Kälte|cold|
+der|Frühling|spring|Frühlinge
+der|Sommer|summer|Sommer
+der|Herbst|autumn|Herbste
+der|Winter|winter|Winter
+die|Jahreszeit|season|Jahreszeiten
+das|Feuer|fire|Feuer
+die|Erde|earth; soil|
+die|Luft|air|
+der|Stein|stone|Steine
+der|Sand|sand|
+die|Wiese|meadow|Wiesen
+die|Pflanze|plant|Pflanzen
+das|Blatt|leaf; sheet|Blätter
+die|Rose|rose|Rosen
+der|Park|park|Parks
+das|Feld|field|Felder
+der|Weg|path, way|Wege
+die|Umwelt|environment|
+# Animals
+das|Tier|animal|Tiere
+der|Hund|dog|Hunde
+die|Katze|cat|Katzen
+der|Vogel|bird|Vögel
+das|Pferd|horse|Pferde
+die|Kuh|cow|Kühe
+das|Schwein|pig|Schweine
+das|Schaf|sheep|Schafe
+die|Ziege|goat|Ziegen
+das|Huhn|chicken, hen|Hühner
+die|Ente|duck|Enten
+die|Maus|mouse|Mäuse
+das|Kaninchen|rabbit|Kaninchen
+der|Löwe|lion|Löwen
+der|Tiger|tiger|Tiger
+der|Elefant|elephant|Elefanten
+der|Bär|bear|Bären
+der|Wolf|wolf|Wölfe
+der|Fuchs|fox|Füchse
+der|Affe|monkey|Affen
+die|Schlange|snake; queue|Schlangen
+der|Frosch|frog|Frösche
+der|Schmetterling|butterfly|Schmetterlinge
+die|Biene|bee|Bienen
+die|Spinne|spider|Spinnen
+die|Fliege|fly|Fliegen
+das|Insekt|insect|Insekten
+# Travel & transport
+das|Auto|car|Autos
+der|Bus|bus|Busse
+der|Zug|train|Züge
+das|Fahrrad|bicycle|Fahrräder
+das|Motorrad|motorbike|Motorräder
+das|Flugzeug|aeroplane|Flugzeuge
+das|Schiff|ship|Schiffe
+das|Boot|boat|Boote
+die|U-Bahn|underground, subway|U-Bahnen
+die|S-Bahn|suburban train|S-Bahnen
+die|Straßenbahn|tram|Straßenbahnen
+das|Taxi|taxi|Taxis
+der|Bahnhof|station|Bahnhöfe
+der|Flughafen|airport|Flughäfen
+die|Haltestelle|stop (bus, tram)|Haltestellen
+die|Straße|street, road|Straßen
+die|Autobahn|motorway|Autobahnen
+die|Ampel|traffic light|Ampeln
+die|Ecke|corner|Ecken
+der|Parkplatz|parking space, car park|Parkplätze
+die|Fahrkarte|ticket|Fahrkarten
+das|Ticket|ticket|Tickets
+der|Führerschein|driving licence|Führerscheine
+der|Koffer|suitcase|Koffer
+das|Gepäck|luggage|
+die|Reise|journey, trip|Reisen
+der|Flug|flight|Flüge
+die|Ankunft|arrival|Ankünfte
+die|Abfahrt|departure|Abfahrten
+die|Verspätung|delay|Verspätungen
+der|Reisepass|passport|Reisepässe
+der|Ausweis|ID card|Ausweise
+der|Urlaub|holiday|Urlaube
+das|Hotel|hotel|Hotels
+die|Karte|map; card; ticket|Karten
+der|Unfall|accident|Unfälle
+die|Brücke|bridge|Brücken
+# Town
+die|Stadt|town, city|Städte
+das|Dorf|village|Dörfer
+der|Platz|square; space|Plätze
+die|Kirche|church|Kirchen
+das|Museum|museum|Museen
+das|Theater|theatre|Theater
+das|Kino|cinema|Kinos
+die|Bibliothek|library|Bibliotheken
+das|Krankenhaus|hospital|Krankenhäuser
+die|Apotheke|pharmacy|Apotheken
+die|Post|post office; mail|
+die|Bank|bank; bench|Banken
+das|Geschäft|shop; business|Geschäfte
+der|Laden|shop|Läden
+der|Markt|market|Märkte
+der|Supermarkt|supermarket|Supermärkte
+die|Bäckerei|bakery|Bäckereien
+das|Rathaus|town hall|Rathäuser
+das|Café|café|Cafés
+das|Restaurant|restaurant|Restaurants
+das|Schwimmbad|swimming pool|Schwimmbäder
+das|Gebäude|building|Gebäude
+das|Zentrum|centre|Zentren
+die|Polizei|police|
+der|Zoo|zoo|Zoos
+# Work
+die|Arbeit|work|
+der|Job|job|Jobs
+der|Beruf|profession|Berufe
+die|Firma|company|Firmen
+das|Büro|office|Büros
+der|Chef|boss|Chefs
+der|Kollege|colleague|Kollegen
+der|Mitarbeiter|employee|Mitarbeiter
+das|Gehalt|salary|Gehälter
+der|Termin|appointment|Termine
+die|Besprechung|meeting|Besprechungen
+der|Vertrag|contract|Verträge
+die|Bewerbung|job application|Bewerbungen
+die|Stelle|job, position; place|Stellen
+die|Aufgabe|task|Aufgaben
+das|Projekt|project|Projekte
+der|Kunde|customer|Kunden
+der|Computer|computer|Computer
+das|Telefon|telephone|Telefone
+das|Handy|mobile phone|Handys
+die|E-Mail|email|E-Mails
+der|Brief|letter|Briefe
+das|Dokument|document|Dokumente
+der|Kugelschreiber|ballpoint pen|Kugelschreiber
+der|Bleistift|pencil|Bleistifte
+das|Papier|paper|
+die|Pause|break|Pausen
+der|Feierabend|end of the working day|Feierabende
+# School & learning
+die|Schule|school|Schulen
+die|Universität|university|Universitäten
+die|Klasse|class|Klassen
+der|Unterricht|lessons, teaching|
+das|Fach|subject|Fächer
+der|Lehrer|teacher|Lehrer
+der|Schüler|pupil|Schüler
+der|Student|student|Studenten
+das|Buch|book|Bücher
+das|Heft|exercise book|Hefte
+das|Wörterbuch|dictionary|Wörterbücher
+die|Prüfung|exam|Prüfungen
+die|Note|mark, grade|Noten
+die|Hausaufgabe|homework|Hausaufgaben
+die|Übung|exercise|Übungen
+die|Frage|question|Fragen
+die|Antwort|answer|Antworten
+das|Beispiel|example|Beispiele
+das|Thema|topic|Themen
+der|Text|text|Texte
+die|Seite|page; side|Seiten
+das|Wort|word|Wörter
+der|Satz|sentence|Sätze
+die|Sprache|language|Sprachen
+der|Kurs|course|Kurse
+die|Geschichte|history; story|Geschichten
+# Media & tech
+der|Fernseher|television set|Fernseher
+das|Radio|radio|Radios
+die|Kamera|camera|Kameras
+das|Foto|photo|Fotos
+der|Film|film|Filme
+die|Musik|music|
+das|Lied|song|Lieder
+das|Internet|internet|
+die|App|app|Apps
+das|Spiel|game|Spiele
+die|Nachricht|message; news|Nachrichten
+die|Zeitung|newspaper|Zeitungen
+die|Zeitschrift|magazine|Zeitschriften
+die|Batterie|battery|Batterien
+der|Bildschirm|screen|Bildschirme
+das|Passwort|password|Passwörter
+der|Laptop|laptop|Laptops
+der|Anruf|phone call|Anrufe
+die|Nummer|number|Nummern
+das|Video|video|Videos
+# Health
+der|Arzt|doctor|Ärzte
+der|Zahnarzt|dentist|Zahnärzte
+die|Praxis|surgery, practice|Praxen
+der|Patient|patient|Patienten
+die|Krankheit|illness|Krankheiten
+der|Schmerz|pain|Schmerzen
+das|Fieber|fever|
+die|Erkältung|cold (illness)|Erkältungen
+der|Husten|cough|
+die|Grippe|flu|
+die|Tablette|tablet, pill|Tabletten
+das|Medikament|medicine|Medikamente
+das|Pflaster|plaster|Pflaster
+die|Verletzung|injury|Verletzungen
+die|Gesundheit|health|
+der|Krankenwagen|ambulance|Krankenwagen
+der|Stress|stress|
+der|Schlaf|sleep|
+# Money & shopping
+das|Geld|money|
+der|Euro|euro|Euros
+der|Cent|cent|Cents
+die|Münze|coin|Münzen
+die|Kreditkarte|credit card|Kreditkarten
+das|Konto|bank account|Konten
+der|Preis|price; prize|Preise
+die|Kasse|till, checkout|Kassen
+die|Quittung|receipt|Quittungen
+das|Angebot|offer|Angebote
+die|Größe|size|Größen
+die|Farbe|colour|Farben
+der|Einkauf|purchase|Einkäufe
+die|Tüte|bag (plastic, paper)|Tüten
+die|Packung|packet|Packungen
+das|Kilo|kilo|Kilos
+der|Liter|litre|Liter
+der|Geldautomat|cash machine|Geldautomaten
+# Time
+die|Zeit|time|Zeiten
+der|Tag|day|Tage
+die|Woche|week|Wochen
+der|Monat|month|Monate
+das|Jahr|year|Jahre
+die|Stunde|hour; lesson|Stunden
+die|Minute|minute|Minuten
+die|Sekunde|second|Sekunden
+der|Moment|moment|Momente
+die|Uhrzeit|time (of day)|Uhrzeiten
+der|Morgen|morning|Morgen
+der|Mittag|midday|Mittage
+der|Nachmittag|afternoon|Nachmittage
+der|Abend|evening|Abende
+die|Nacht|night|Nächte
+das|Wochenende|weekend|Wochenenden
+der|Feiertag|public holiday|Feiertage
+der|Geburtstag|birthday|Geburtstage
+der|Kalender|calendar|Kalender
+der|Anfang|beginning|Anfänge
+das|Ende|end|Enden
+die|Zukunft|future|
+die|Vergangenheit|past|
+der|Montag|Monday|Montage
+der|Dienstag|Tuesday|Dienstage
+der|Mittwoch|Wednesday|Mittwoche
+der|Donnerstag|Thursday|Donnerstage
+der|Freitag|Friday|Freitage
+der|Samstag|Saturday|Samstage
+der|Sonntag|Sunday|Sonntage
+die|Party|party|Partys
+# Free time
+die|Freizeit|free time|
+das|Hobby|hobby|Hobbys
+der|Sport|sport|
+der|Fußball|football|Fußbälle
+der|Ball|ball|Bälle
+die|Mannschaft|team|Mannschaften
+der|Spieler|player|Spieler
+die|Gitarre|guitar|Gitarren
+das|Klavier|piano|Klaviere
+das|Instrument|instrument|Instrumente
+der|Tanz|dance|Tänze
+die|Kunst|art|Künste
+das|Bild|picture|Bilder
+der|Verein|club|Vereine
+der|Ausflug|outing, day trip|Ausflüge
+das|Konzert|concert|Konzerte
+der|Spaß|fun|
+die|Wanderung|hike|Wanderungen
+das|Tor|goal; gate|Tore
+das|Training|training|Trainings
+der|Fan|fan|Fans
+das|Picknick|picnic|Picknicks
+# Feelings & ideas
+die|Liebe|love|
+das|Glück|luck; happiness|
+die|Freude|joy|Freuden
+die|Angst|fear|Ängste
+die|Sorge|worry|Sorgen
+die|Wut|anger|
+die|Hoffnung|hope|Hoffnungen
+der|Wunsch|wish|Wünsche
+der|Traum|dream|Träume
+die|Idee|idea|Ideen
+die|Meinung|opinion|Meinungen
+der|Grund|reason|Gründe
+das|Problem|problem|Probleme
+die|Lösung|solution|Lösungen
+die|Erfahrung|experience|Erfahrungen
+die|Möglichkeit|possibility|Möglichkeiten
+die|Entscheidung|decision|Entscheidungen
+der|Plan|plan|Pläne
+das|Ziel|goal, aim|Ziele
+die|Regel|rule|Regeln
+die|Wahrheit|truth|Wahrheiten
+der|Fehler|mistake|Fehler
+der|Erfolg|success|Erfolge
+die|Gefahr|danger|Gefahren
+die|Sicherheit|safety, security|
+die|Freiheit|freedom|Freiheiten
+die|Ruhe|peace and quiet|
+die|Geduld|patience|
+der|Mut|courage|
+das|Gefühl|feeling|Gefühle
+die|Hilfe|help|
+die|Entschuldigung|apology; excuse me|Entschuldigungen
+# Society
+die|Gesellschaft|society; company|Gesellschaften
+die|Kultur|culture|Kulturen
+das|Land|country; countryside|Länder
+die|Welt|world|Welten
+die|Regierung|government|Regierungen
+die|Politik|politics|
+die|Wirtschaft|economy|
+das|Gespräch|conversation|Gespräche
+die|Gruppe|group|Gruppen
+die|Hauptstadt|capital city|Hauptstädte
+der|Staat|state|Staaten
+der|Krieg|war|Kriege
+der|Frieden|peace|
+das|Recht|right; law|Rechte
+die|Stimme|voice; vote|Stimmen
+# Jobs
+der|Polizist|police officer|Polizisten
+der|Koch|cook|Köche
+die|Kellnerin|waitress|Kellnerinnen
+der|Verkäufer|sales assistant|Verkäufer
+der|Ingenieur|engineer|Ingenieure
+der|Anwalt|lawyer|Anwälte
+der|Bäcker|baker|Bäcker
+der|Friseur|hairdresser|Friseure
+die|Krankenschwester|nurse|Krankenschwestern
+der|Fahrer|driver|Fahrer
+der|Pilot|pilot|Piloten
+der|Bauer|farmer|Bauern
+der|Künstler|artist|Künstler
+der|Journalist|journalist|Journalisten
+der|Mechaniker|mechanic|Mechaniker
+der|Vermieter|landlord|Vermieter
+# Everyday things
+die|Kerze|candle|Kerzen
+das|Geschenk|present, gift|Geschenke
+das|Paket|parcel|Pakete
+das|Spielzeug|toy|Spielzeuge
+der|Müll|rubbish|
+die|Sache|thing|Sachen
+das|Ding|thing|Dinge
+das|Stück|piece|Stücke
+die|Liste|list|Listen
+die|Zahl|number|Zahlen
+die|Menge|amount; crowd|Mengen
+das|Paar|pair, couple|Paare
+das|Licht|light|Lichter
+der|Lärm|noise|
+die|Adresse|address|Adressen
+der|Ort|place|Orte
+die|Richtung|direction|Richtungen
+die|Situation|situation|Situationen
+die|Information|information|Informationen
+die|Hälfte|half|Hälften
+die|Mitte|middle|
+die|Art|kind, type; way|Arten
+der|Fall|case|Fälle
+das|Zeichen|sign, symbol|Zeichen
+der|Kreis|circle|Kreise
+die|Linie|line|Linien
+die|Form|shape, form|Formen
+der|Geruch|smell|Gerüche
+der|Geschmack|taste|
+die|Ordnung|order, tidiness|
+das|Werkzeug|tool|Werkzeuge
+der|Hammer|hammer|Hämmer
+der|Nagel|nail|Nägel
+die|Vase|vase|Vasen
+die|Puppe|doll|Puppen
+die|Briefmarke|stamp|Briefmarken
+der|Umschlag|envelope|Umschläge
+die|Kiste|box, crate|Kisten
+`
+
+/* ── Data ───────────────────────────────────────────────────────────────── */
+const WORDS = []
+{
+  let topic = 'Other'
+  for (const raw of RAW.split('\n')) {
+    const line = raw.trim()
+    if (!line) continue
+    if (line.startsWith('#')) { topic = line.slice(1).trim(); continue }
+    const [a, w, en, pl] = line.split('|')
+    WORDS.push({ a, w, en, pl: pl || '', topic })
+  }
+}
+const TOPICS = [...new Set(WORDS.map((x) => x.topic))]
+const TOTAL = WORDS.length
+
+/* Endings that reliably give away the gender. Shown only when the rule
+   agrees with the word's actual article, so it never teaches a false rule. */
+const RULES = [
+  [/(ung|heit|keit|schaft|ion|tät)$/, 'die', 'Nouns ending in -$1 are always feminine.'],
+  [/(chen|lein)$/, 'das', 'Nouns ending in -$1 are always neuter.'],
+  [/(ment|um)$/, 'das', 'Nouns ending in -$1 are usually neuter.'],
+  [/(ling|ismus)$/, 'der', 'Nouns ending in -$1 are masculine.'],
+  [/(tag|abend|morgen|mittag)$/i, 'der', 'Days and times of day are masculine.'],
+  [/(ling|ommer|inter|erbst)$/, 'der', 'Seasons are masculine.'],
+  [/e$/, 'die', 'Most nouns ending in -e are feminine (with exceptions like der Junge, das Auge).'],
+]
+function ruleFor(item) {
+  if (/^(Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag|Sonntag)$/.test(item.w))
+    return 'Days of the week are masculine.'
+  for (const [re, g, text] of RULES) {
+    const m = item.w.match(re)
+    if (m && g === item.a) return text.replace('$1', m[1] || '')
+  }
+  if (/^Ge/.test(item.w) && item.a === 'das') return 'Many nouns starting with Ge- are neuter.'
+  return ''
+}
+
+/* ── Storage (never throws — private windows can refuse it) ─────────────── */
+const KEY = 'artikeltrainer.v1'
+function loadStore() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {} } catch { return {} }
+}
+function saveStore() {
+  try { localStorage.setItem(KEY, JSON.stringify(store)) } catch { /* not available */ }
+}
+const store = loadStore()
+store.stats = store.stats || {}
+if (store.showMeaning === undefined) store.showMeaning = true
+
+const stat = (item) => store.stats[item.a + ' ' + item.w] || { c: 0, w: 0, s: 0 }
+const isKnown = (item) => stat(item).s >= 2
+const isNew = (item) => { const s = stat(item); return !s.c && !s.w }
+const isHard = (item) => { const s = stat(item); return s.w > 0 && s.s < 2 }
+
+function record(item, correct) {
+  const k = item.a + ' ' + item.w
+  const s = { ...stat(item) }
+  if (correct) { s.c++; s.s++ } else { s.w++; s.s = 0 }
+  store.stats[k] = s
+  saveStore()
+}
+
+/* ── Session ────────────────────────────────────────────────────────────── */
+let mode = 'all'
+let topic = 'all'
+let queue = []
+let poolSize = 0
+let cleared = new Set()
+let missed = new Map()
+let answered = null
+let session = { attempts: 0, right: 0, streak: 0, best: 0 }
+
+function shuffle(arr) {
+  const a = arr.slice()
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
+function poolFor(m, t) {
+  let pool = t === 'all' ? WORDS : WORDS.filter((x) => x.topic === t)
+  if (m === 'new') pool = pool.filter(isNew)
+  if (m === 'hard') pool = pool.filter(isHard)
+  return pool
+}
+
+function startRound(list) {
+  queue = shuffle(list)
+  poolSize = queue.length
+  cleared = new Set()
+  missed = new Map()
+  answered = null
+  session = { attempts: 0, right: 0, streak: 0, best: 0 }
+  render()
+}
+
+function answer(choice) {
+  if (answered || !queue.length) return
+  const item = queue[0]
+  const correct = choice === item.a
+  answered = { choice, correct }
+  record(item, correct)
+  session.attempts++
+  if (correct) {
+    session.right++
+    session.streak++
+    session.best = Math.max(session.best, session.streak)
+  } else {
+    session.streak = 0
+    missed.set(item.a + ' ' + item.w, item)
+  }
+  render()
+  document.getElementById('next')?.focus({ preventScroll: true })
+}
+
+function next() {
+  if (!answered) return
+  const item = queue.shift()
+  if (answered.correct) {
+    cleared.add(item.a + ' ' + item.w)
+  } else {
+    // Bring a missed word back soon — four cards later — not at the very end.
+    queue.splice(Math.min(4, queue.length), 0, item)
+  }
+  answered = null
+  render()
+}
+
+/* ── Speech ─────────────────────────────────────────────────────────────── */
+const canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window
+function germanVoice() {
+  const vs = speechSynthesis.getVoices() || []
+  return vs.find((v) => /^de[-_]DE/i.test(v.lang)) || vs.find((v) => /^de/i.test(v.lang)) || null
+}
+function say(text) {
+  if (!canSpeak) return
+  try {
+    speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(text)
+    const v = germanVoice()
+    u.lang = v?.lang || 'de-DE'
+    if (v) u.voice = v
+    u.rate = 0.9
+    speechSynthesis.speak(u)
+  } catch { /* speech unavailable */ }
+}
+
+/* ── Rendering ──────────────────────────────────────────────────────────── */
+const $ = (id) => document.getElementById(id)
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+const pct = (n, d) => (d ? Math.round((n / d) * 100) : 0)
+
+function renderMastery() {
+  const known = WORDS.filter(isKnown).length
+  $('masteryText').textContent = `${known} / ${TOTAL}`
+  $('masteryBar').style.width = `${pct(known, TOTAL)}%`
+  $('genders').innerHTML = ['der', 'die', 'das']
+    .map((g) => {
+      let c = 0, w = 0
+      for (const item of WORDS) {
+        if (item.a !== g) continue
+        const s = stat(item)
+        c += s.c
+        w += s.w
+      }
+      const acc = c + w ? pct(c, c + w) : null
+      return `<div class="g ${g}"><b>${g}</b>
+        <div class="bar"><i style="width:${acc ?? 0}%"></i></div>
+        <small>${acc == null ? 'not tried yet' : `${acc}% right`}</small></div>`
+    })
+    .join('')
+}
+
+function renderSession() {
+  $('session').innerHTML = `
+    <span><b>${session.attempts}</b> answered · <b>${session.right}</b> right${
+      session.attempts ? ` · ${pct(session.right, session.attempts)}%` : ''
+    }</span>
+    <span>streak <b>${session.streak}</b>${session.best > 2 ? ` · best ${session.best}` : ''}</span>`
+}
+
+function renderCard() {
+  const card = $('card')
+
+  if (!poolSize) {
+    card.innerHTML = `<div class="empty">
+      <div>${
+        mode === 'hard'
+          ? 'No difficult words right now — everything you have missed you have since got right twice in a row.'
+          : mode === 'new'
+            ? 'You have tried every word in this selection.'
+            : 'No words in this selection.'
+      }</div>
+      <div class="row"><button class="btn primary" data-go="all">Practise all words</button></div>
+    </div>`
+    return
+  }
+
+  if (!queue.length) {
+    const list = [...missed.values()]
+    card.innerHTML = `<div class="done">
+      <h2>${list.length === 0 ? 'Alles richtig!' : list.length <= 3 ? 'Sehr gut!' : 'Geschafft!'}</h2>
+      <div class="big-score">${pct(poolSize - list.length, poolSize)}%</div>
+      <p>${poolSize} words · right first time: ${poolSize - list.length} · ${session.attempts} answers in total</p>
+      ${
+        list.length
+          ? `<div class="missed">${list
+              .map((x) => `<div><span><span class="a-${x.a}">${x.a}</span> ${esc(x.w)}</span><span>${esc(x.en)}</span></div>`)
+              .join('')}</div>`
+          : ''
+      }
+      <div class="row">
+        ${list.length ? `<button class="btn primary" data-go="missed">Practise these ${list.length} again</button>` : ''}
+        <button class="btn${list.length ? '' : ' primary'}" data-go="again">New round</button>
+      </div>
+    </div>`
+    return
+  }
+
+  const item = queue[0]
+  const done = cleared.size
+  const slotClass = answered ? item.a : ''
+  const plural = item.pl ? `Plural: <b>die ${esc(item.pl)}</b>` : 'Usually no plural.'
+  const rule = answered ? ruleFor(item) : ''
+
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="topic">${esc(item.topic)}</span>
+      <span>${done} / ${poolSize}${queue.length > poolSize - done ? ` · ${queue.length - (poolSize - done)} to retry` : ''}</span>
+    </div>
+    <div class="progress"><i style="width:${pct(done, poolSize)}%"></i></div>
+
+    <div class="word-zone">
+      <div class="word-line"><span class="slot ${slotClass}">${answered ? item.a : 'der'}</span><span>${esc(item.w)}</span></div>
+      <div class="meaning" ${store.showMeaning || answered ? '' : 'hidden'}>${esc(item.en)}</div>
+      ${canSpeak ? `<button class="speak" id="speak" type="button">🔊 ${answered ? 'Hear it' : 'Hear the word'}</button>` : ''}
+    </div>
+
+    <div class="answers">
+      ${['der', 'die', 'das']
+        .map((g, i) => {
+          let cls = `art ${g}`
+          if (answered) {
+            if (g === item.a) cls += ' correct'
+            else if (g === answered.choice) cls += ' wrong'
+            else cls += ' faded'
+          }
+          const mark = answered ? (g === item.a ? ' ✓' : g === answered.choice ? ' ✗' : '') : ''
+          return `<button class="${cls}" data-art="${g}" ${answered ? 'disabled' : ''}>${g}${mark}<small>${i + 1}</small></button>`
+        })
+        .join('')}
+    </div>
+
+    <div class="feedback ${answered ? (answered.correct ? 'ok' : 'bad') : ''}" ${answered ? '' : 'hidden'}>
+      ${
+        answered
+          ? `<div class="verdict">${answered.correct ? 'Richtig!' : `Nicht ganz — it's <span class="a-${item.a}">${item.a}</span>`}</div>
+             <div class="detail"><b><span class="a-${item.a}">${item.a}</span> ${esc(item.w)}</b> · ${esc(item.en)} · ${plural}</div>
+             ${rule ? `<div class="tip">💡 ${esc(rule)}</div>` : ''}
+             ${!answered.correct ? `<div class="tip">It comes back in a few cards.</div>` : ''}`
+          : ''
+      }
+    </div>
+
+    <button class="next" id="next" ${answered ? '' : 'hidden'}>Weiter →</button>`
+}
+
+function renderControls() {
+  document.querySelectorAll('.chip[data-mode]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.dataset.mode === mode))
+    const n = poolFor(b.dataset.mode, topic).length
+    b.textContent = { all: 'All words', new: 'New', hard: 'Difficult' }[b.dataset.mode] + ` · ${n}`
+  })
+}
+
+function render() {
+  renderMastery()
+  renderControls()
+  renderCard()
+  renderSession()
+}
+
+/* ── Events ─────────────────────────────────────────────────────────────── */
+$('topic').innerHTML =
+  `<option value="all">All topics</option>` +
+  TOPICS.map((t) => `<option value="${esc(t)}">${esc(t)} · ${WORDS.filter((x) => x.topic === t).length}</option>`).join('')
+
+$('topic').addEventListener('change', (e) => {
+  topic = e.target.value
+  startRound(poolFor(mode, topic))
+})
+
+document.querySelectorAll('.chip[data-mode]').forEach((b) =>
+  b.addEventListener('click', () => {
+    mode = b.dataset.mode
+    startRound(poolFor(mode, topic))
+  }),
+)
+
+$('showMeaning').checked = store.showMeaning
+$('showMeaning').addEventListener('change', (e) => {
+  store.showMeaning = e.target.checked
+  saveStore()
+  render()
+})
+
+$('card').addEventListener('click', (e) => {
+  const art = e.target.closest('[data-art]')
+  if (art) return answer(art.dataset.art)
+  if (e.target.closest('#next')) return next()
+  if (e.target.closest('#speak')) {
+    const item = queue[0]
+    if (item) say(answered ? `${item.a} ${item.w}` : item.w)
+    return
+  }
+  const go = e.target.closest('[data-go]')
+  if (go) {
+    const g = go.dataset.go
+    if (g === 'missed') startRound([...missed.values()])
+    else if (g === 'all') { mode = 'all'; topic = 'all'; $('topic').value = 'all'; startRound(poolFor(mode, topic)) }
+    else startRound(poolFor(mode, topic))
+  }
+})
+
+document.addEventListener('keydown', (e) => {
+  // The target can be the document itself (nothing focused), which has no .closest.
+  if (e.target instanceof Element && e.target.closest('select, input')) return
+  if (e.metaKey || e.ctrlKey || e.altKey) return
+  if (!answered && ['1', '2', '3'].includes(e.key)) {
+    e.preventDefault()
+    answer(['der', 'die', 'das'][Number(e.key) - 1])
+  } else if (answered && (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowRight')) {
+    e.preventDefault()
+    next()
+  }
+})
+
+// Reset asks for a second tap on the same button — no dialogs.
+let resetArmed = null
+$('reset').addEventListener('click', () => {
+  const btn = $('reset')
+  if (!resetArmed) {
+    btn.textContent = 'Tap again to delete all progress'
+    btn.classList.add('armed')
+    resetArmed = setTimeout(() => {
+      btn.textContent = 'Reset progress'
+      btn.classList.remove('armed')
+      resetArmed = null
+    }, 4000)
+    return
+  }
+  clearTimeout(resetArmed)
+  resetArmed = null
+  btn.textContent = 'Reset progress'
+  btn.classList.remove('armed')
+  store.stats = {}
+  saveStore()
+  startRound(poolFor(mode, topic))
+})
+
+if (canSpeak) speechSynthesis.getVoices()
+
+startRound(poolFor(mode, topic))
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+/* ── Design tokens ───────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* Neutrals */
+  --bg: #f6f7f9;
+  --bg-sunk: #eceef2;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #eef0f4;
+  --line: #e2e5ea;
+  --line-strong: #ccd1d9;
+
+  --text: #12151a;
+  --text-2: #4d5561;
+  --text-3: #7c8695;
+  --text-inv: #ffffff;
+
+  /* Brand — deep ink blue, calm and legible */
+  --accent: #2f5bd0;
+  --accent-hover: #2a4fb8;
+  --accent-soft: #e8eeff;
+  --accent-line: #c3d2ff;
+  --accent-text: #23459c;
+
+  /* Semantic */
+  --ok: #16855c;
+  --ok-soft: #e2f5ec;
+  --ok-line: #b3e2cd;
+  --bad: #cf3232;
+  --bad-soft: #fdeaea;
+  --bad-line: #f6c7c7;
+  --warn: #b06d00;
+  --warn-soft: #fdf3e0;
+  --warn-line: #f3ddb2;
+  --info: #0f6f92;
+  --info-soft: #e3f4fa;
+
+  /* Gender colours — consistent everywhere der/die/das appear */
+  --der: #2f6fd0;
+  --der-soft: #e6efff;
+  --die: #c2417f;
+  --die-soft: #fdeaf3;
+  --das: #1f8a6d;
+  --das-soft: #e3f6f0;
+  --plural: #7a5bd0;
+  --plural-soft: #efeaff;
+
+  /* Level accents */
+  --a1: #1f8a6d;
+  --a2: #2f5bd0;
+  --b1: #8a4bbf;
+
+  /* Type */
+  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Inter, Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-base: 0.9375rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+  --fs-3xl: 2.25rem;
+
+  /* Space */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --s7: 32px;
+  --s8: 44px;
+
+  /* Shape */
+  --r-sm: 8px;
+  --r: 12px;
+  --r-lg: 16px;
+  --r-xl: 22px;
+  --r-full: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 22, 34, 0.06), 0 1px 1px rgba(16, 22, 34, 0.04);
+  --shadow: 0 2px 8px rgba(16, 22, 34, 0.07), 0 1px 2px rgba(16, 22, 34, 0.05);
+  --shadow-lg: 0 12px 32px rgba(16, 22, 34, 0.12), 0 2px 8px rgba(16, 22, 34, 0.06);
+  --ring: 0 0 0 3px var(--accent-line);
+
+  --nav-h: 60px;
+  --maxw: 940px;
+  --speed: 150ms;
+}
+
+:root[data-theme='dark'],
+:root:not([data-theme='light']) {
+  /* placeholder so the cascade below is symmetrical */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0f1115;
+    --bg-sunk: #0a0c0f;
+    --surface: #171a20;
+    --surface-2: #1d212a;
+    --surface-3: #252a35;
+    --line: #2a2f3a;
+    --line-strong: #3a4150;
+
+    --text: #eef1f6;
+    --text-2: #a8b1c0;
+    --text-3: #78828f;
+    --text-inv: #0f1115;
+
+    --accent: #7b9cff;
+    --accent-hover: #94aeff;
+    --accent-soft: #1c2438;
+    --accent-line: #2f3f66;
+    --accent-text: #a8bfff;
+
+    --ok: #4bc396;
+    --ok-soft: #12281f;
+    --ok-line: #1f4a38;
+    --bad: #ff7a7a;
+    --bad-soft: #2b1618;
+    --bad-line: #55282a;
+    --warn: #e0a54a;
+    --warn-soft: #2a2015;
+    --warn-line: #4d3a1c;
+    --info: #62c1e0;
+    --info-soft: #12262e;
+
+    --der: #7ba7ff;
+    --der-soft: #1a2338;
+    --die: #f083b6;
+    --die-soft: #331b28;
+    --das: #57cfa9;
+    --das-soft: #122c25;
+    --plural: #b099f5;
+    --plural-soft: #241d3a;
+
+    --a1: #57cfa9;
+    --a2: #7b9cff;
+    --b1: #c08cf0;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+    --ring: 0 0 0 3px var(--accent-line);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0f1115;
+  --bg-sunk: #0a0c0f;
+  --surface: #171a20;
+  --surface-2: #1d212a;
+  --surface-3: #252a35;
+  --line: #2a2f3a;
+  --line-strong: #3a4150;
+
+  --text: #eef1f6;
+  --text-2: #a8b1c0;
+  --text-3: #78828f;
+  --text-inv: #0f1115;
+
+  --accent: #7b9cff;
+  --accent-hover: #94aeff;
+  --accent-soft: #1c2438;
+  --accent-line: #2f3f66;
+  --accent-text: #a8bfff;
+
+  --ok: #4bc396;
+  --ok-soft: #12281f;
+  --ok-line: #1f4a38;
+  --bad: #ff7a7a;
+  --bad-soft: #2b1618;
+  --bad-line: #55282a;
+  --warn: #e0a54a;
+  --warn-soft: #2a2015;
+  --warn-line: #4d3a1c;
+  --info: #62c1e0;
+  --info-soft: #12262e;
+
+  --der: #7ba7ff;
+  --der-soft: #1a2338;
+  --die: #f083b6;
+  --die-soft: #331b28;
+  --das: #57cfa9;
+  --das-soft: #122c25;
+  --plural: #b099f5;
+  --plural-soft: #241d3a;
+
+  --a1: #57cfa9;
+  --a2: #7b9cff;
+  --b1: #c08cf0;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
