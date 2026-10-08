@@ -96,7 +96,7 @@ export const modules = [
     title: 'Life, health and plans',
     icon: '🌍',
     summary: 'Education and career, health and relationships, travel and the future.',
-    lessonIds: ['b1.l24', 'b1.l25'],
+    lessonIds: ['b1.l24', 'b1.l25', 'b1.l26'],
   },
 ]
 

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Sprachheld - a lightweight interactive German tutor, A1 to A2, with Goethe exam prep.",
+  "description": "Sprachheld - a lightweight interactive German tutor, A1 to B1, with Goethe exam prep.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

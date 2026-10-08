@@ -2,8 +2,8 @@
 
 An interactive German tutor — by making you *use* German, not read about it.
 
-**A1 and A2 are complete** (18 lessons). B1 grammar is written and available in the
-Grammar tab; B1 lessons are planned but not built — see [Levels](#levels).
+**A1, A2 and B1 are complete** — 26 lessons, from absolute beginner to confident
+intermediate. See [Levels](#levels).
 
 No account, no server, no tracking. Everything lives in your browser.
 
@@ -24,7 +24,7 @@ npm run dev      # http://localhost:5173
 | | |
 | --- | --- |
 | **Dashboard** | One question answered every morning: *what should I do today?* Daily plan, streak, weak areas, what's due for review. |
-| **Lessons** | 18 lessons across A1 and A2, each one `Learn → Practice → Apply → Review`. |
+| **Lessons** | 26 lessons across A1, A2 and B1, each one `Learn → Practice → Apply → Review`. |
 | **Conversations** | Branching German dialogues that correct your mistakes as you type, and explain why. |
 | **Article trainer** | `der / die / das`, weighted so the nouns you keep missing come back most often. |
 | **Sentence builder** | Tap words into order until German word order is muscle memory. |
@@ -213,12 +213,12 @@ office, housing and renting, banking and public offices, invitations, telling
 stories about the past, problems and solutions. Dative, Perfekt, reflexives,
 subordinate clauses, comparatives, imperative.
 
-**B1 — grammar only, for now.** All 13 B1 grammar topics are written and usable in
-the **Grammar** tab — relative clauses, Konjunktiv II, passive, Präteritum,
-Plusquamperfekt, adjective endings, advanced connectors, formal register. The B1
-*lessons* are not built yet; `src/content/modules.js` holds their planned shape
-with empty `lessonIds`, and `src/content/CURRICULUM.md` has the full plan. Drop
-lesson files in and list their ids to light the level up — no code changes.
+**B1 — 8 lessons.** Meetings and workplace talk, formal and informal e-mails,
+opinions and discussion, technology and the news, environment and society,
+education and job interviews, health and relationships, travel experiences and
+the future. Sentence structure and connectors, register, zu + infinitive,
+Konjunktiv II, passive, relative clauses, adjective endings, verbs with fixed
+prepositions, Präteritum, Futur I, Plusquamperfekt.
 
 A level unlocks when the previous one is 80% complete.
 
