@@ -7,6 +7,11 @@ Grammar tab; B1 lessons are planned but not built — see [Levels](#levels).
 
 No account, no server, no tracking. Everything lives in your browser.
 
+**Live:** https://aashishdhamale.github.io/sprachheld/ — every push to `main` runs
+`npm run check` and, if it passes, redeploys (see `.github/workflows/deploy.yml`).
+
+To run it locally:
+
 ```bash
 npm install
 npm run dev      # http://localhost:5173
