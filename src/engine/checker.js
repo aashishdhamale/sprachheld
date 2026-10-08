@@ -187,7 +187,11 @@ function clauses(sentence) {
     // its own even when its verb is one we do not know.
     const ownClause = SUBORDINATORS.includes(fold(strip(p[0] || '')))
     if (!hasVerb && ownClause) out.push(p)
-    else if (!hasVerb && out.length) out[out.length - 1] = out[out.length - 1].concat(p)
+    else if (!hasVerb && out.length) {
+      const merged = out[out.length - 1].concat(p)
+      if (closed.has(p)) closed.add(merged)
+      out[out.length - 1] = merged
+    }
     else if (!hasVerb && parts.length > 1) out.push(p) // leading fragment; merged below
     else out.push(p)
   }
@@ -328,6 +332,11 @@ RULES.push((s) => {
 
     let vp = -1
     for (let i = 0; i < toks.length; i++) {
+      // A modal (wollten, kann, würde …) is the conjugated verb of its clause.
+      if (i > 0 && MODALS.has(fold(strip(toks[i])))) {
+        vp = i
+        break
+      }
       if (finiteAt(toks, i) && !isTrailingInfinitive(toks, i)) {
         vp = i
         break

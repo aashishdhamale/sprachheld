@@ -82,6 +82,8 @@ const QUIET = [
   'Was meinst du — kann das klappen?',
   'Kommst du mich besuchen, wenn ich nach München ziehe?',
   'Ja, mit ihr muss ich auf jeden Fall noch einmal sprechen.',
+  'Wir wollten zusammen essen gehen.',
+  'Ich glaube, ich lade sie am Samstag ein — und diesmal bin ich pünktlich!',
 ]
 
 for (const s of QUIET) {
