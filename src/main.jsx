@@ -8,11 +8,14 @@ import './styles/layout.css'
 
 import App from './App.jsx'
 import { ProgressProvider } from './store/progress.jsx'
+import { SyncProvider } from './store/sync.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ProgressProvider>
-      <App />
+      <SyncProvider>
+        <App />
+      </SyncProvider>
     </ProgressProvider>
   </StrictMode>,
 )

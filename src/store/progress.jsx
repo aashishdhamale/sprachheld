@@ -12,6 +12,7 @@ import { schedule, cardId, newCard } from '../engine/srs.js'
 
 const KEY = 'sprachheld.v1'
 const MISTAKE_CAP = 250
+const EXAM_CAP = 60
 
 export const SKILLS = [
   'vocabulary',
@@ -119,6 +120,8 @@ export function initialState() {
     mistakes: [], // newest first
     vocab: {}, // vocabId -> { known, difficult, favorite }
     scenariosDone: {}, // conversationId -> { runs, lastScore }
+    numbers: {}, // trainer mode -> { band, rounds, best, lastAt }
+    exams: [], // mock-exam attempts, newest first
     settings: {
       theme: 'auto',
       showTranslation: true,
@@ -152,6 +155,8 @@ function hydrate() {
     tagStats: saved.tagStats || {},
     vocab: saved.vocab || {},
     scenariosDone: saved.scenariosDone || {},
+    numbers: saved.numbers || {},
+    exams: Array.isArray(saved.exams) ? saved.exams : [],
     mistakes: Array.isArray(saved.mistakes) ? saved.mistakes : [],
   }
   for (const s of SKILLS) if (!merged.skills[s]) merged.skills[s] = { correct: 0, total: 0, ema: 0.5 }
@@ -378,6 +383,52 @@ function reducer(state, action) {
         ].slice(0, MISTAKE_CAP),
       }
     }
+
+    /* --- numbers trainer --- */
+    case 'numbersBand': {
+      const prev = state.numbers[action.mode] || { band: 1, rounds: 0, best: 0 }
+      return { ...state, numbers: { ...state.numbers, [action.mode]: { ...prev, band: action.band } } }
+    }
+
+    case 'numbersRound': {
+      const prev = state.numbers[action.mode] || { band: 1, rounds: 0, best: 0 }
+      const gained = 5
+      let next = {
+        ...state,
+        xp: state.xp + gained,
+        numbers: {
+          ...state.numbers,
+          [action.mode]: {
+            ...prev,
+            band: action.band ?? prev.band,
+            rounds: (prev.rounds || 0) + 1,
+            best: Math.max(prev.best || 0, action.score || 0),
+            lastAt: Date.now(),
+          },
+        },
+      }
+      next = touchDay(next, { xp: gained, minutes: action.minutes || 0 })
+      return next
+    }
+
+    /* --- mock exams --- */
+    case 'examAttempt': {
+      const gained = action.attempt.complete ? 30 : 10
+      let next = {
+        ...state,
+        xp: state.xp + gained,
+        exams: [action.attempt, ...state.exams.filter((a) => a.id !== action.attempt.id)].slice(0, EXAM_CAP),
+      }
+      next = touchDay(next, { xp: gained, minutes: action.minutes || 0 })
+      return next
+    }
+
+    /* --- sync: the merged state arrives whole --- */
+    case 'replace':
+      return {
+        ...action.state,
+        settings: { ...action.state.settings, aiKey: state.settings.aiKey },
+      }
 
     /* --- misc --- */
     case 'xp': {

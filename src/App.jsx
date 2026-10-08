@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react'
 import { useRoute, useScrollTop, href } from './lib/router.js'
 import { useProgress } from './store/progress.jsx'
+import { useSync } from './store/sync.jsx'
 import { overview } from './engine/planner.js'
 import { dueCount } from './engine/srs.js'
 
@@ -9,6 +10,9 @@ import Learn from './pages/Learn.jsx'
 import Lesson from './pages/Lesson.jsx'
 import Practice from './pages/Practice.jsx'
 import Articles from './pages/Articles.jsx'
+import Numbers from './pages/Numbers.jsx'
+import ExamHub from './pages/ExamHub.jsx'
+import ExamRun from './pages/ExamRun.jsx'
 import Builder from './pages/Builder.jsx'
 import Translate from './pages/Translate.jsx'
 import ListeningHub from './pages/ListeningHub.jsx'
@@ -35,7 +39,7 @@ const TABS = [
 ]
 
 // Routes that own the whole screen (no chrome).
-const FULLSCREEN = new Set(['lesson'])
+const FULLSCREEN = new Set(['lesson', 'examRun'])
 
 export default function App() {
   const route = useRoute()
@@ -78,6 +82,12 @@ function Page({ route }) {
       return <Practice />
     case 'articles':
       return <Articles />
+    case 'numbers':
+      return <Numbers />
+    case 'exam':
+      return <ExamHub />
+    case 'examRun':
+      return <ExamRun id={params.id} query={route.query} />
     case 'builder':
       return <Builder />
     case 'translate':
@@ -117,6 +127,7 @@ function Page({ route }) {
 
 function TopBar({ route }) {
   const { state } = useProgress()
+  const sync = useSync()
   const ov = overview(state)
   const due = dueCount(state.srs)
 
@@ -149,6 +160,16 @@ function TopBar({ route }) {
             style={{ textDecoration: 'none' }}
           >
             🔄 {due}
+          </a>
+        )}
+        {sync.config && (
+          <a
+            href={href('/settings')}
+            className={`sync-dot ${sync.status.phase}`}
+            title={sync.status.phase === 'error' ? `Sync problem: ${sync.status.error}` : sync.status.phase === 'syncing' ? 'Syncing…' : 'Synced with your other devices'}
+            aria-label="Sync status"
+          >
+            {sync.status.phase === 'error' ? '⚠' : '☁'}
           </a>
         )}
         <span className="streak-badge" title="Daily streak">
@@ -190,7 +211,7 @@ function isActive(route, tab) {
   if (tab.name === 'learn') return ['learn', 'level', 'lesson'].includes(route.name)
   if (tab.name === 'chat') return ['chat', 'chatIndex', 'freechat'].includes(route.name)
   if (tab.name === 'practice')
-    return ['practice', 'articles', 'builder', 'translate', 'drillTag', 'drillSkill', 'review', 'listening', 'reading', 'readingOne'].includes(route.name)
+    return ['practice', 'articles', 'numbers', 'exam', 'builder', 'translate', 'drillTag', 'drillSkill', 'review', 'listening', 'reading', 'readingOne'].includes(route.name)
   return route.name === tab.name
 }
 
@@ -215,6 +236,9 @@ function titleFor(route) {
     lesson: 'Lesson',
     practice: 'Practice',
     articles: 'Article trainer',
+    numbers: 'Numbers & time',
+    exam: 'Exam prep',
+    examRun: 'Mock exam',
     builder: 'Sentence builder',
     translate: 'Translation',
     listening: 'Listening',

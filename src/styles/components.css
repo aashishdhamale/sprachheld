@@ -730,3 +730,80 @@
   height: 40px;
   font-size: 16px;
 }
+
+/* ── Mock exams ──────────────────────────────────────────────────────────── */
+
+.exam-text-title {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: var(--s2);
+}
+.exam-text-body {
+  white-space: pre-line;
+  line-height: 1.65;
+}
+.exam-num {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  margin-right: 4px;
+  border-radius: var(--r-sm);
+  background: var(--surface-3);
+  color: var(--text-2);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+.opt.exam-ad {
+  align-items: flex-start;
+  height: 100%;
+}
+.exam-card {
+  padding: var(--s6) var(--s4);
+  gap: var(--s2);
+  border-style: dashed;
+  border-width: 2px;
+}
+.exam-card-word {
+  font-size: 1.9rem;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.cal-table td {
+  padding: 6px 8px;
+}
+
+/* ── Sync status ─────────────────────────────────────────────────────────── */
+
+.sync-dot {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-full);
+  text-decoration: none;
+  font-size: 0.95rem;
+  color: var(--text-3);
+}
+.sync-dot.syncing {
+  animation: sync-pulse 1.2s ease-in-out infinite;
+}
+.sync-dot.error {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+@keyframes sync-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sync-dot.syncing {
+    animation: none;
+  }
+}

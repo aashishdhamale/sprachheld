@@ -38,6 +38,7 @@ const CATCH = [
   ['Du bin müde.', 'konjugation'],
   ['Ich habe nicht ein Auto.', 'negation'],
   ['Ich fahre mit den Bus.', 'dativ'],
+  ['Ich gehe mit den Mann ins Kino.', 'dativ'],
   ['Ich gehe zu Hause.', 'nach-zu'],
   ['Ich bleibe hier, weil ich bin müde.', 'nebensatz'],
 ]
@@ -70,6 +71,10 @@ const QUIET = [
   'Ich gehe nach Hause.',
   'Sie hat zwei Kinder.',
   'Wir essen um zwölf Uhr.',
+  // "den" is also the Dative plural — never flag it.
+  'Ich spiele mit den Kindern.',
+  'Wir fahren mit den Autos.',
+  'Die Klasse mit den meisten Punkten gewinnt.',
 ]
 
 for (const s of QUIET) {

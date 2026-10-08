@@ -28,6 +28,7 @@ export const lessons = collect(import.meta.glob('./lessons/*.js', { eager: true 
 export const conversations = collect(import.meta.glob('./conversations/*.js', { eager: true }))
 export const readings = collect(import.meta.glob('./readings/*.js', { eager: true }))
 export const listenings = collect(import.meta.glob('./listenings/*.js', { eager: true }))
+export const exams = collect(import.meta.glob('./exams/*.js', { eager: true }))
 
 export const levels = LEVELS
 export const modules = MODULES
@@ -46,6 +47,7 @@ export const lessonById = byId(lessons)
 export const conversationById = byId(conversations)
 export const readingById = byId(readings)
 export const listeningById = byId(listenings)
+export const examById = byId(exams)
 export const moduleById = byId(modules)
 export const levelById = byId(levels)
 

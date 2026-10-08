@@ -38,6 +38,18 @@ export default function Practice() {
       sub: `der · die · das — ${nouns.length} nouns`,
     },
     {
+      to: '/exam',
+      icon: '🎓',
+      title: 'Exam prep',
+      sub: 'Goethe A1 & A2 mock exams — timed or by section',
+    },
+    {
+      to: '/numbers',
+      icon: '🔢',
+      title: 'Numbers & time',
+      sub: 'Zahlen, Uhrzeit, Preise, Datum — by ear',
+    },
+    {
       to: '/builder',
       icon: '🧩',
       title: 'Sentence builder',

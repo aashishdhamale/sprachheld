@@ -31,7 +31,10 @@ npm run dev      # http://localhost:5173
 | **Vocabulary** | Flashcards with audio, plurals, examples, and a spaced-repetition schedule. |
 | **Grammar** | 46 short topics — a brief explanation, then immediate practice. |
 | **Reading / Listening** | Level-appropriate texts (tap any word for its meaning) and audio scenes with adjustable speed. |
+| **Numbers & time** | Zahlen, Uhrzeit, Preise, Datum, Telefonnummern — hear *Viertel vor acht* and type 7:45, or see 3,99 € and write it out. Generated, so it never runs out; adapts as you go. |
+| **Exam prep** | Mock exams in the format of the **Goethe-Zertifikat A1 (Start Deutsch 1)** and **A2** — two full Modelltests per level, all four sections, real timing and audio play limits. Take a whole exam or practise one section. |
 | **Progress** | Per-skill accuracy, weak grammar topics, recurring mistakes, memory strength. |
+| **Sync** | Optional: keep phone and laptop in step through a secret Gist in your own GitHub account. |
 
 ### The teaching model
 
@@ -55,6 +58,46 @@ including the speech pack. Then reload. Settings shows which voice is in use.
 
 Speaking exercises use speech **recognition**, available in Chrome and Edge. Where
 it isn't, they fall back to type-and-check.
+
+---
+
+## Mock exams
+
+`src/engine/exam.js` defines each exam's **format** — sections, order, timing, and for
+every part the task type, item count and how often audio may be played.
+`src/content/exams/` holds the **items** only, and `check-exams.mjs` proves each file
+matches its format exactly.
+
+| | A1 · Start Deutsch 1 | A2 |
+| --- | --- | --- |
+| Order | Hören → Lesen → Schreiben → Sprechen | Lesen → Hören → Schreiben → Sprechen |
+| Hören | 6 a/b/c (2×) · 4 richtig/falsch (1×) · 5 a/b/c (2×) | 5 a/b/c (2×) · 5 matching (1×) · 5 a/b/c (1×) · 5 ja/nein (2×) |
+| Lesen | 5 richtig/falsch · 5 ad a/b · 5 signs richtig/falsch | 5 article · 5 directory · 5 e-mail · 5 ads matching (one x) |
+| Schreiben | form (5 gaps) · message ≈ 30 words | message 20–30 words · formal e-mail 30–40 words |
+| Sprechen | introduce yourself · word cards · requests | question cards · talk about yourself · plan together |
+
+Each section is scored out of 25, as in the real exam; 60 of 100 passes. Listening,
+reading and the form are marked automatically. Messages and speaking are self-assessed
+against the task points and a model answer; the error checker marks the classic mistakes,
+and with an API key the AI tutor gives examiner-style feedback on writing.
+
+All questions are original practice material written for this app — not official
+Goethe-Institut papers.
+
+---
+
+## Sync between devices (optional)
+
+**Settings → Sync between devices.** Create a GitHub token with only the **gist** scope,
+paste it on each device, and progress syncs through a secret Gist in your account — no
+other server. It syncs on open, when the app returns to the foreground, and shortly after
+you stop practising.
+
+Every sync is *pull → merge → push*. `src/engine/merge.js` merges field by field so work
+from both devices survives and nothing counts twice: per-day counters take the larger
+value, review cards keep the most recent copy, lessons keep the best score, attempts and
+mistakes are unioned, and the streak is recomputed. Profile and settings stay per device.
+The token lives in its own storage key; it and the Anthropic key are never uploaded.
 
 ---
 
@@ -88,6 +131,7 @@ src/
     lessons/        the lessons themselves
     conversations/  branching scenarios
     readings/  listenings/
+    exams/          Goethe-format mock exams
     SCHEMA.md       the contract every content file follows
     CURRICULUM.md   the fixed id registry
   engine/         the teaching brain (framework-free, testable)
@@ -97,6 +141,9 @@ src/
     checker.js      rule-based German error checker
     conversation.js branching dialogue engine
     planner.js      "what should I do today?"
+    numbers.js      generated numbers / time / price / date drills
+    exam.js         Goethe A1 & A2 formats and scoring
+    merge.js        two-device progress merge for sync
     ai.js           optional Anthropic adapter
   ui/             reusable components (Exercise, Chat, VocabCard, …)
   pages/          one file per route
@@ -135,7 +182,7 @@ in parallel without colliding.
 
 ```bash
 npm run validate   # content against SCHEMA.md — ids, references, shapes, level gates
-npm test           # the three checks below
+npm test           # the checks below
 npm run check      # validate + test + build
 ```
 
@@ -144,6 +191,9 @@ npm run check      # validate + test + build
 | `test-engine.mjs` | The error checker catches the classic mistakes and stays silent on correct German; grading is forgiving about case, punctuation and umlaut spelling; SRS intervals behave; a conversation can always be driven to its end. |
 | `check-answerable.mjs` | **Every** exercise accepts its own model answer. Catches an `order` exercise whose tokens can't spell the answer, or a `blank` whose answer isn't among its options — bugs where a learner answers perfectly and is told they're wrong. |
 | `check-false-positives.mjs` | Runs the error checker over every German sentence in the content. All of it is correct German, so anything flagged is a false positive. Budget: 1%. |
+| `check-numbers.mjs` | Number words, ordinals, clock readings, prices and dates are correct German, the parsers accept every sensible format, and 5,000 generated items each accept their own answer. |
+| `check-exams.mjs` | Every mock exam matches its format, every answer key is valid, model texts hit the word range and cover every point, and the checker stays silent on all exam German. |
+| `check-sync.mjs` | Merging two diverged devices loses nothing, double-counts nothing, and settles — merging again, or in the other order, changes nothing. |
 
 The last one matters most. A tutor that marks correct German as wrong destroys
 trust faster than one that misses a mistake, so the checker is written to

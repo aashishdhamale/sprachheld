@@ -63,8 +63,9 @@ export function speak(text, opts = {}) {
     }
     if (!voices.length) loadVoices()
     const u = new SpeechSynthesisUtterance(String(text))
-    u.lang = picked?.lang || 'de-DE'
-    if (picked) u.voice = picked
+    const voice = opts.voice || picked
+    u.lang = voice?.lang || 'de-DE'
+    if (voice) u.voice = voice
     u.rate = opts.rate ?? 0.95
     u.pitch = opts.pitch ?? 1
     u.volume = opts.volume ?? 1
@@ -111,7 +112,82 @@ export function speakSequence(lines, opts = {}) {
   }
 }
 
+/* ── Several speakers (exam dialogues) ───────────────────────────────────── */
+
+const MALE_VOICE = /stefan|conrad|killian|hans|markus|florian|ralf|jonas|bernd|klaus|yannick|male|männlich/i
+const FEMALE_VOICE = /hedda|katja|anna|petra|marlene|vicki|amala|seraphina|helena|sabine|louisa|female|weiblich/i
+// With only one German voice installed, pitch is all we have to tell people apart.
+const PITCH = { f: 1.15, f2: 1.32, m: 0.82, m2: 0.68, n: 1 }
+
+function germanVoices() {
+  if (!voices.length) loadVoices()
+  return voices.filter((v) => /^de(-|_|$)/i.test(v.lang || ''))
+}
+
+/**
+ * Speak one line as a given speaker: f / f2 (women), m / m2 (men), n (announcer).
+ * Uses a matching voice when more than one German voice is installed.
+ */
+export function speakAs(text, { speaker = 'n', rate, onend } = {}) {
+  const de = germanVoices()
+  let voice = null
+  if (de.length > 1) {
+    voice = speaker.startsWith('m') ? de.find((v) => MALE_VOICE.test(v.name)) : de.find((v) => FEMALE_VOICE.test(v.name))
+  }
+  const pitch = voice ? (speaker.endsWith('2') ? (speaker.startsWith('m') ? 0.85 : 1.15) : 1) : PITCH[speaker] ?? 1
+  return speak(text, { rate, onend, voice, pitch })
+}
+
 /* ── Speech recognition (speaking practice) ──────────────────────────────── */
+
+/**
+ * Keep listening until stopped — for speaking tasks longer than one sentence.
+ * onText receives the full transcript so far (final + current interim).
+ */
+export function listenLong({ onText, onError, onEnd } = {}) {
+  const Ctor = RecognitionCtor()
+  if (!Ctor) {
+    onError?.('unsupported')
+    return null
+  }
+  let rec
+  try {
+    rec = new Ctor()
+  } catch {
+    onError?.('unsupported')
+    return null
+  }
+  rec.lang = 'de-DE'
+  rec.interimResults = true
+  rec.continuous = true
+  let finals = ''
+  rec.onresult = (e) => {
+    let interim = ''
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript
+      if (e.results[i].isFinal) finals += (finals ? ' ' : '') + t.trim()
+      else interim += t
+    }
+    onText?.((finals + (interim ? ' ' + interim.trim() : '')).trim())
+  }
+  rec.onerror = (e) => onError?.(e.error || 'error')
+  rec.onend = () => onEnd?.(finals)
+  try {
+    rec.start()
+  } catch {
+    onError?.('start-failed')
+    return null
+  }
+  return {
+    stop: () => {
+      try {
+        rec.stop()
+      } catch {
+        /* ignore */
+      }
+    },
+  }
+}
 
 function RecognitionCtor() {
   if (typeof window === 'undefined') return null

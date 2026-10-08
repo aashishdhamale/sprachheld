@@ -565,8 +565,21 @@ RULES.push((s) => {
   )
 })
 
+function dativePluralFollows(rest, lex) {
+  const noun = rest
+    .trim()
+    .split(/\s+/)
+    .slice(0, 3)
+    .find((t) => /^[A-ZÄÖÜ]/.test(t))
+  if (!noun) return false
+  const w = noun.replace(/[^A-Za-zÄÖÜäöüß]/g, '')
+  const entry = lex?.get(w)
+  if (entry?.article && entry.de === w && !(entry.plural && fold(entry.plural) === fold(`die ${w}`))) return false
+  return /(en|ern|eln|rn|ln)$/.test(w) || /(os|ys|ls|ts|as)$/.test(w)
+}
+
 /** Preposition + wrong case article, for the fixed-case prepositions. */
-RULES.push((s) => {
+RULES.push((s, opts) => {
   const out = []
   const re = /\b(aus|bei|mit|nach|seit|von|zu|durch|für|gegen|ohne|um)\s+(den|dem|die|der|das|einen|einem|eine|einer|ein)\b/gi
   let m
@@ -577,6 +590,10 @@ RULES.push((s) => {
     if (!want) continue
     const isAcc = ['den', 'einen'].includes(art)
     const isDat = ['dem', 'einem'].includes(art)
+    // "den" is also the Dative PLURAL: *mit den Kindern*, *mit den meisten
+    // Punkten*, *mit den Autos*. Skip when the noun has a plural-dative ending
+    // — unless the lexicon knows it as a singular (*mit den Garten*).
+    if (want === 'D' && art === 'den' && dativePluralFollows(s.slice(m.index + m[0].length), opts?.lexicon)) continue
     if (want === 'D' && isAcc) {
       out.push(
         issue(

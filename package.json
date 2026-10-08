@@ -3,13 +3,13 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Sprachheld - a lightweight interactive German tutor, A1 to B1.",
+  "description": "Sprachheld - a lightweight interactive German tutor, A1 to A2, with Goethe exam prep.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "validate": "node scripts/validate-content.mjs",
-    "test": "node scripts/test-engine.mjs && node scripts/check-answerable.mjs && node scripts/check-conversations.mjs && node scripts/check-false-positives.mjs",
+    "test": "node scripts/test-engine.mjs && node scripts/check-answerable.mjs && node scripts/check-conversations.mjs && node scripts/check-false-positives.mjs && node scripts/check-numbers.mjs && node scripts/check-exams.mjs && node scripts/check-sync.mjs",
     "check": "npm run validate && npm test && npm run build",
     "build:artifact": "vite build --config vite.artifact.config.js"
   },

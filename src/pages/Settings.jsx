@@ -3,6 +3,8 @@ import { useProgress } from '../store/progress.jsx'
 import { MODELS, testKey, aiReady } from '../engine/ai.js'
 import { hasGermanVoice, germanVoiceName, ttsSupported, speak, sttSupported } from '../lib/speech.js'
 import { Card, Section, ToggleRow, Modal, Pill } from '../ui/primitives.jsx'
+import { useSync } from '../store/sync.jsx'
+import { TOKEN_URL, gistUrl } from '../lib/sync.js'
 
 export default function Settings() {
   const { state, dispatch } = useProgress()
@@ -84,7 +86,7 @@ export default function Settings() {
         <h1 className="page-title">⚙ Settings</h1>
         <p className="page-sub">
           Everything is stored in this browser only. No account, no server, nothing leaves this
-          device — unless you switch on the AI tutor below.
+          device — unless you switch on sync or the AI tutor below.
         </p>
       </header>
 
@@ -305,6 +307,8 @@ export default function Settings() {
         </Card>
       </Section>
 
+      <SyncSection />
+
       <Section title="Your data">
         <Card className="stack">
           <div className="row-wrap">
@@ -357,5 +361,127 @@ export default function Settings() {
         </p>
       </Modal>
     </div>
+  )
+}
+
+/* ── Sync between devices ────────────────────────────────────────────────── */
+
+function SyncSection() {
+  const sync = useSync()
+  const [token, setToken] = useState('')
+  const [confirmOff, setConfirmOff] = useState(false)
+  const { config, status } = sync
+  const busy = status.phase === 'syncing'
+
+  return (
+    <Section title="Sync between devices">
+      <Card className="stack">
+        {!config ? (
+          <>
+            <p className="small muted">
+              Keep your phone and laptop in step — streak, lessons, review schedule, mock exams. Progress is
+              stored in a private (secret) Gist in <strong>your own GitHub account</strong>; no other server is
+              involved, and work done on either device is merged, never overwritten.
+            </p>
+            <ol className="small stack-sm" style={{ paddingLeft: 18 }}>
+              <li>
+                <a href={TOKEN_URL} target="_blank" rel="noreferrer">
+                  Create a GitHub token
+                </a>{' '}
+                — only the <strong>gist</strong> box is ticked. Pick an expiry you are comfortable with.
+              </li>
+              <li>Paste it below and connect. Do the same on each device, with the same token.</li>
+            </ol>
+            <div className="field">
+              <label className="label" htmlFor="ghtoken">
+                GitHub token
+              </label>
+              <input
+                id="ghtoken"
+                className="input"
+                type="password"
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                placeholder="ghp_…"
+                autoComplete="off"
+              />
+              <div className="row" style={{ marginTop: 8 }}>
+                <button className="btn btn-sm btn-primary" disabled={!token.trim() || busy} onClick={() => sync.connect(token).then((ok) => ok && setToken(''))}>
+                  {busy ? 'Connecting…' : 'Connect'}
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="between">
+              <div>
+                <div className="bold small">
+                  Connected as @{config.login}{' '}
+                  {status.phase === 'ok' && <Pill tone="ok">✓ in sync</Pill>}
+                  {busy && <Pill>syncing…</Pill>}
+                </div>
+                <div className="tiny dim">
+                  {config.lastSyncAt ? `Last synced ${new Date(config.lastSyncAt).toLocaleString()}` : 'Not synced yet'}
+                  {gistUrl(config) && (
+                    <>
+                      {' · '}
+                      <a href={gistUrl(config)} target="_blank" rel="noreferrer">
+                        view the gist
+                      </a>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="row-wrap">
+              <button className="btn btn-sm" onClick={sync.syncNow} disabled={busy}>
+                🔄 Sync now
+              </button>
+              <button className="btn btn-sm btn-ghost" onClick={() => setConfirmOff(true)}>
+                Disconnect this device
+              </button>
+            </div>
+            <p className="tiny dim">
+              Syncs automatically when the app opens, when you come back to it, and shortly after you stop
+              practising. Profile and settings stay per device.
+            </p>
+          </>
+        )}
+        {status.phase === 'error' && <div className="note warn small">{status.error}</div>}
+        <p className="tiny dim">
+          The token is stored only in this browser and is never synced or exported. Your Anthropic API key is
+          never uploaded. A secret gist is unlisted, not encrypted — anyone with its exact link could read your
+          learning progress.
+        </p>
+      </Card>
+
+      <Modal
+        open={confirmOff}
+        onClose={() => setConfirmOff(false)}
+        title="Disconnect this device?"
+        footer={
+          <>
+            <button className="btn" onClick={() => setConfirmOff(false)}>
+              Cancel
+            </button>
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                sync.disconnect()
+                setConfirmOff(false)
+              }}
+            >
+              Disconnect
+            </button>
+          </>
+        }
+      >
+        <p className="muted">
+          This device stops syncing and forgets the token. Your progress here and the copy on GitHub both stay
+          as they are — connect again any time.
+        </p>
+      </Modal>
+    </Section>
   )
 }
