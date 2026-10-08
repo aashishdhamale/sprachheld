@@ -31,6 +31,11 @@ export const listenings = collect(import.meta.glob('./listenings/*.js', { eager:
 export const exams = collect(import.meta.glob('./exams/*.js', { eager: true }))
 
 export const levels = LEVELS
+
+/** The CEFR levels that a list of content items actually covers, in order. */
+export function levelsIn(items) {
+  return ['A1', 'A2', 'B1'].filter((l) => items.some((x) => x.level === l))
+}
 export const modules = MODULES
 
 /* ── Indexes ─────────────────────────────────────────────────────────────── */

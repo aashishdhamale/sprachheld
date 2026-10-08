@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useProgress } from '../store/progress.jsx'
-import { CONTENT_STATS } from '../content/index.js'
+import { CONTENT_STATS, lessons, lessonsByLevel, levelsIn } from '../content/index.js'
 
 const GOALS = [
   { min: 10, label: '10 min', sub: 'Light' },
@@ -12,7 +12,10 @@ const STARTS = [
   { level: 'A1', label: 'Complete beginner', sub: 'I know almost no German' },
   { level: 'A1', label: 'A few words', sub: 'Hallo, danke, tschüss — start at A1 anyway' },
   { level: 'A2', label: 'I know the basics', sub: 'Present tense, simple sentences — skip ahead to A2' },
-]
+  { level: 'B1', label: 'I can get by', sub: 'Perfekt, dative, weil-clauses — skip ahead to B1' },
+].filter((s) => lessonsByLevel[s.level]?.length)
+
+const TOP_LEVEL = levelsIn(lessons).slice(-1)[0] || 'A1'
 
 export default function Onboarding() {
   const { dispatch } = useProgress()
@@ -46,7 +49,7 @@ export default function Onboarding() {
               />
               <h1>Sprachheld</h1>
               <p className="muted big" style={{ marginTop: 6 }}>
-                German from A1 to B1 — by using it, not by reading about it.
+                German from A1 to {TOP_LEVEL} — by using it, not by reading about it.
               </p>
             </div>
 

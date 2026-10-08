@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { conversations } from '../content/index.js'
+import { conversations, levelsIn } from '../content/index.js'
 import { useProgress } from '../store/progress.jsx'
 import { href } from '../lib/router.js'
 import { currentLevel } from '../engine/adaptive.js'
@@ -62,7 +62,7 @@ export default function ChatIndex() {
       </a>
 
       <div className="row-wrap">
-        {['all', 'A1', 'A2', 'B1'].map((l) => (
+        {['all', ...levelsIn(conversations)].map((l) => (
           <button
             key={l}
             className={`chip ${level === l ? 'on' : ''}`}

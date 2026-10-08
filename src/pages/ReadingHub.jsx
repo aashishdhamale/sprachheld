@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { readings, readingById } from '../content/index.js'
+import { readings, readingById, levelsIn } from '../content/index.js'
 import { useProgress } from '../store/progress.jsx'
 import { href, navigate } from '../lib/router.js'
 import Reading from '../ui/Reading.jsx'
@@ -44,7 +44,7 @@ export default function ReadingHub({ id }) {
       </header>
 
       <div className="row-wrap">
-        {['all', 'A1', 'A2', 'B1'].map((l) => (
+        {['all', ...levelsIn(readings)].map((l) => (
           <button
             key={l}
             className={`chip ${level === l ? 'on' : ''}`}

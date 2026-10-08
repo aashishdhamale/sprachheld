@@ -56,9 +56,6 @@ export const modules = [
     summary: 'The office, colleagues, flat-hunting and dealing with a landlord.',
     lessonIds: ['a2.l13', 'a2.l14'],
   },
-  // IN PROGRESS — a2.l15 to a2.l18 are planned but not written yet. Their ids
-  // are listed below as comments; restore them to `lessonIds` as each lesson
-  // file lands and it appears in the path automatically. See CURRICULUM.md.
   {
     id: 'a2.admin',
     levelId: 'a2',
@@ -76,18 +73,14 @@ export const modules = [
     lessonIds: ['a2.l16', 'a2.l17', 'a2.l18'],
   },
 
-  /* ── B1 ────────────────────────────────────────────────────────────────────
-     The B1 grammar topics are written and live in the Grammar hub; the B1
-     lessons themselves are not built yet. The modules stay here as the planned
-     shape — add lesson files to `lessons/` and list their ids below, and the
-     level appears in the path automatically. See CURRICULUM.md for the plan. */
+  /* ── B1 ────────────────────────────────────────────────────────────────── */
   {
     id: 'b1.work',
     levelId: 'b1',
     title: 'Professional German',
     icon: '💼',
     summary: 'Meetings, presentations and writing emails that sound right.',
-    lessonIds: [],
+    lessonIds: ['b1.l19', 'b1.l20'],
   },
   {
     id: 'b1.debate',

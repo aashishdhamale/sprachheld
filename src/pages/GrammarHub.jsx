@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { grammar, grammarByLevel, lessons } from '../content/index.js'
+import { grammar, grammarByLevel, lessons, levelsIn } from '../content/index.js'
 import { useProgress, labelForTag } from '../store/progress.jsx'
 import { href } from '../lib/router.js'
 import { ratingOf } from '../engine/adaptive.js'
@@ -53,7 +53,7 @@ export default function GrammarHub() {
           onChange={(e) => setQ(e.target.value)}
         />
         <div className="row-wrap">
-          {['all', 'A1', 'A2', 'B1'].map((l) => (
+          {['all', ...levelsIn(grammar)].map((l) => (
             <button
               key={l}
               className={`chip ${level === l ? 'on' : ''}`}

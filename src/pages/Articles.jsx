@@ -4,7 +4,7 @@
  */
 
 import { useMemo, useRef, useState } from 'react'
-import { nouns } from '../content/index.js'
+import { nouns, levelsIn } from '../content/index.js'
 import { useProgress } from '../store/progress.jsx'
 import { cardId, strength, GRADE } from '../engine/srs.js'
 import { articleHint } from '../engine/grader.js'
@@ -57,7 +57,7 @@ export default function Articles() {
       <div className="card stack">
         <div className="row-wrap">
           <span className="small bold">Level</span>
-          {['all', 'A1', 'A2', 'B1'].map((l) => (
+          {['all', ...levelsIn(nouns)].map((l) => (
             <button
               key={l}
               className={`chip ${level === l ? 'on' : ''}`}

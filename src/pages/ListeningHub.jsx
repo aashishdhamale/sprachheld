@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { listenings } from '../content/index.js'
+import { listenings, levelsIn } from '../content/index.js'
 import { href } from '../lib/router.js'
 import { hasGermanVoice, ttsSupported, germanVoiceName } from '../lib/speech.js'
 import Listening from '../ui/Listening.jsx'
@@ -51,7 +51,7 @@ export default function ListeningHub() {
       <VoiceNotice />
 
       <div className="row-wrap">
-        {['all', 'A1', 'A2', 'B1'].map((l) => (
+        {['all', ...levelsIn(listenings)].map((l) => (
           <button
             key={l}
             className={`chip ${level === l ? 'on' : ''}`}

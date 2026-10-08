@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { vocab, vocabByTopic } from '../content/index.js'
+import { vocab, vocabByTopic, levelsIn } from '../content/index.js'
 import { useProgress } from '../store/progress.jsx'
 import { href } from '../lib/router.js'
 import { cardId, strength, summarize, dueCount } from '../engine/srs.js'
@@ -111,7 +111,7 @@ export default function Vocabulary() {
           ))}
         </div>
         <div className="row-wrap">
-          {['all', 'A1', 'A2', 'B1'].map((l) => (
+          {['all', ...levelsIn(vocab)].map((l) => (
             <button
               key={l}
               className={`chip ${level === l ? 'on' : ''}`}
