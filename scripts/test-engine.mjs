@@ -39,6 +39,7 @@ const CATCH = [
   ['Ich habe nicht ein Auto.', 'negation'],
   ['Ich fahre mit den Bus.', 'dativ'],
   ['Ich gehe mit den Mann ins Kino.', 'dativ'],
+  ['Du kann gut kochen.', 'konjugation'],
   ['Ich gehe zu Hause.', 'nach-zu'],
   ['Ich bleibe hier, weil ich bin müde.', 'nebensatz'],
 ]
@@ -75,6 +76,12 @@ const QUIET = [
   'Ich spiele mit den Kindern.',
   'Wir fahren mit den Autos.',
   'Die Klasse mit den meisten Punkten gewinnt.',
+  // B1: Konjunktiv II, dashes, unknown verbs in a Nebensatz, ihr after a preposition.
+  'Wenn ich mehr Zeit hätte, würde ich öfter Sport machen.',
+  'Ich wäre froh, wenn die Firma uns alle wieder ins Büro holen würde.',
+  'Was meinst du — kann das klappen?',
+  'Kommst du mich besuchen, wenn ich nach München ziehe?',
+  'Ja, mit ihr muss ich auf jeden Fall noch einmal sprechen.',
 ]
 
 for (const s of QUIET) {

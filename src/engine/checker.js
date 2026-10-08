@@ -124,6 +124,10 @@ const MODALS = new Set(
   'mag', 'magst', 'mögen', 'mögt',
   'möchte', 'möchtest', 'möchten', 'möchtet',
   'werde', 'wirst', 'wird', 'werden', 'werdet',
+  // Konjunktiv II — the B1 politeness and wish forms
+  'würde', 'würdest', 'würden', 'würdet', 'könnte', 'könntest', 'könnten', 'könntet',
+  'müsste', 'müsstest', 'müssten', 'dürfte', 'dürften', 'sollte', 'solltest',
+  'hätte', 'hättest', 'hätten', 'hättet', 'wäre', 'wärst', 'wären', 'wärt',
     'lass', 'lasst', 'lassen',
   ].map(fold),
 )
@@ -144,12 +148,16 @@ function clauses(sentence) {
   const cleaned = sentence.replace(/[„"“»][^„"“”«»]*[”“"«]/g, ' ')
   const toks = cleaned.trim().replace(/[.!?]+$/, '').split(/\s+/).filter(Boolean)
   const parts = []
+  const closed = new Set() // segments ended by punctuation or a dash
   let cur = []
   for (const t of toks) {
     const bare = fold(strip(t))
     // A dash separates two independent clauses just as a comma does.
     if (/^[—–-]$/.test(t)) {
-      if (cur.length) parts.push(cur)
+      if (cur.length) {
+        parts.push(cur)
+        closed.add(cur)
+      }
       cur = []
       continue
     }
@@ -164,6 +172,7 @@ function clauses(sentence) {
     cur.push(t)
     if (endsClause) {
       parts.push(cur)
+      closed.add(cur)
       cur = []
     }
   }
@@ -174,7 +183,11 @@ function clauses(sentence) {
   const out = []
   for (const p of parts) {
     const hasVerb = p.some((_, i) => finiteAt(p, i))
-    if (!hasVerb && out.length) out[out.length - 1] = out[out.length - 1].concat(p)
+    // "…, wenn ich nach München ziehe" — a subordinate clause is a clause of
+    // its own even when its verb is one we do not know.
+    const ownClause = SUBORDINATORS.includes(fold(strip(p[0] || '')))
+    if (!hasVerb && ownClause) out.push(p)
+    else if (!hasVerb && out.length) out[out.length - 1] = out[out.length - 1].concat(p)
     else if (!hasVerb && parts.length > 1) out.push(p) // leading fragment; merged below
     else out.push(p)
   }
@@ -185,6 +198,7 @@ function clauses(sentence) {
   if (
     out.length > 1 &&
     !/[,:;]$/.test(out[0][out[0].length - 1] || '') &&
+    !closed.has(out[0]) &&
     !out[0].some((_, i) => finiteAt(out[0], i))
   ) {
     const head = out.shift()
@@ -242,6 +256,8 @@ function isSubjectPronoun(tokens, i) {
   const bare = fold(strip(tokens[i]))
   if (!(bare in PERSON_OF)) return false
   if (bare === 'ihr') {
+    const prev = fold(strip(tokens[i - 1] || ''))
+    if (PREP_CASE[prev] || ['an', 'auf', 'in', 'über', 'unter', 'vor', 'hinter', 'neben', 'zwischen'].map(fold).includes(prev)) return false
     const next = strip(tokens[i + 1] || '')
     // "Ihr Mann", "ihr Auto" → possessive. "Ihr kommt" → pronoun.
     if (next && next[0] === next[0].toUpperCase() && /[a-zäöüß]/i.test(next[0])) return false
